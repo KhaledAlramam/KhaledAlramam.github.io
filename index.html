@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khaled Alramam — Senior Android Developer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --white: #f5f0e8;
+    --accent: #ff5c35;
+    --accent2: #3dff9a;
+    --mid: #1a1a1a;
+    --muted: #555;
+    --border: rgba(245,240,232,0.1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  ::selection { background: var(--accent); color: var(--black); }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: difference;
+  }
+  #cursor-ring {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(255,92,53,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.15s ease;
+  }
+  body:has(a:hover) #cursor, body:has(button:hover) #cursor { width: 20px; height: 20px; }
+  body:has(a:hover) #cursor-ring, body:has(button:hover) #cursor-ring { width: 60px; height: 60px; opacity: 0.3; }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 48px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    background: rgba(10,10,10,0.7);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    cursor: none;
+  }
+  .nav-links a:hover { color: var(--white); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 48px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(255,92,53,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(61,255,154,0.05) 0%, transparent 50%);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(245,240,232,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,240,232,0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: linear-gradient(to bottom, transparent, black 30%, black 70%, transparent);
+  }
+
+  .hero-counter {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(56px, 10vw, 140px);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -3px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+
+  .hero-title .line {
+    display: block;
+    opacity: 0;
+    transform: translateY(100%);
+    animation: slideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .hero-title .line:nth-child(1) { animation-delay: 0.1s; }
+  .hero-title .line:nth-child(2) { animation-delay: 0.2s; }
+  .hero-title .line:nth-child(3) { animation-delay: 0.3s; color: var(--accent); font-style: italic; }
+
+  .hero-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-desc {
+    max-width: 380px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+  }
+
+  .hero-badges { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+  .badge {
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .badge:hover { border-color: var(--accent); color: var(--accent); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 64px;
+    right: 48px;
+    writing-mode: vertical-rl;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 1s forwards;
+  }
+  .scroll-hint::after {
+    content: '';
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--muted), transparent);
+    animation: scrollLine 2s 1.5s ease-in-out infinite;
+  }
+
+  /* SECTION BASE */
+  section { padding: 120px 48px; }
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    margin-bottom: 64px;
+  }
+
+  /* ABOUT */
+  #about { border-top: 1px solid var(--border); }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .about-text { color: rgba(245,240,232,0.7); font-size: 15px; line-height: 2; }
+  .about-text strong { color: var(--white); font-weight: 400; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .stat-box {
+    background: var(--mid);
+    padding: 32px 28px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .stat-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,92,53,0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .stat-box:hover { border-color: rgba(255,92,53,0.3); }
+  .stat-box:hover::before { opacity: 1; }
+  .stat-number {
+    font-family: 'Fraunces', serif;
+    font-size: 52px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 8px;
+  }
+  .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* EXPERIENCE */
+  #experience { border-top: 1px solid var(--border); }
+  .exp-list { display: flex; flex-direction: column; gap: 0; }
+  .exp-item {
+    display: grid;
+    grid-template-columns: 220px 1fr 160px;
+    gap: 40px;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+    transition: background 0.3s;
+    position: relative;
+  }
+  .exp-item::before {
+    content: '';
+    position: absolute;
+    left: -48px; right: -48px; top: 0; bottom: 0;
+    background: var(--mid);
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: -1;
+  }
+  .exp-item:hover::before { opacity: 1; }
+
+  .exp-date { color: var(--muted); font-size: 12px; padding-top: 4px; }
+  .exp-company {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .exp-role {
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .exp-bullets { list-style: none; }
+  .exp-bullets li {
+    color: rgba(245,240,232,0.6);
+    font-size: 13px;
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+  .exp-bullets li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .exp-tag {
+    display: inline-block;
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    color: var(--muted);
+    align-self: start;
+    justify-self: end;
+    white-space: nowrap;
+  }
+
+  /* PROJECTS */
+  #projects { border-top: 1px solid var(--border); }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .project-card {
+    background: var(--mid);
+    padding: 40px 32px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.4s;
+    cursor: none;
+  }
+  .project-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .project-card:hover { border-color: rgba(255,92,53,0.3); }
+  .project-card:hover::after { transform: scaleX(1); }
+
+  .project-num {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    display: block;
+    font-style: italic;
+  }
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  .project-desc { color: rgba(245,240,232,0.6); font-size: 13px; line-height: 1.8; margin-bottom: 28px; }
+  .project-tech { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tech-pill {
+    background: rgba(255,92,53,0.1);
+    color: var(--accent);
+    font-size: 10px;
+    padding: 4px 10px;
+    border-radius: 2px;
+    letter-spacing: 0.08em;
+  }
+
+  /* SKILLS */
+  #skills { border-top: 1px solid var(--border); }
+  .skills-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 80px;
+  }
+  .skills-intro { color: rgba(245,240,232,0.6); line-height: 2; }
+  .skills-intro strong { color: var(--accent2); font-weight: 400; }
+
+  .skills-bars { display: flex; flex-direction: column; gap: 28px; }
+  .skill-row { }
+  .skill-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .skill-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .skill-pct { color: var(--muted); font-size: 12px; }
+  .skill-track {
+    height: 2px;
+    background: var(--border);
+    position: relative;
+    overflow: visible;
+  }
+  .skill-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .skill-fill.animated { transform: scaleX(1); }
+
+  /* CERTS */
+  .cert-box {
+    margin-top: 64px;
+    border: 1px solid var(--border);
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: var(--mid);
+    position: relative;
+    overflow: hidden;
+  }
+  .cert-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(61,255,154,0.05), transparent);
+  }
+  .cert-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(61,255,154,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 22px;
+  }
+  .cert-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  .cert-sub { color: var(--muted); font-size: 12px; }
+
+  /* CONTACT */
+  #contact {
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 160px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(255,92,53,0.08), transparent 70%);
+    pointer-events: none;
+  }
+
+  .contact-sub {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .contact-big {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(40px, 7vw, 96px);
+    font-weight: 800;
+    letter-spacing: -3px;
+    line-height: 0.9;
+    margin-bottom: 64px;
+  }
+  .contact-big a {
+    color: var(--white);
+    text-decoration: none;
+    transition: color 0.3s;
+    cursor: none;
+    display: inline-block;
+    position: relative;
+  }
+  .contact-big a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0; right: 0;
+    height: 3px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: left;
+  }
+  .contact-big a:hover { color: var(--accent); }
+  .contact-big a:hover::after { transform: scaleX(1); }
+
+  .contact-links {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .contact-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s;
+    cursor: none;
+  }
+  .contact-link:hover { color: var(--white); }
+  .contact-link::before { content: '↗'; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  /* ANIMATIONS */
+  @keyframes slideUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollLine {
+    0%, 100% { transform: scaleY(1) translateY(0); opacity: 1; }
+    50% { transform: scaleY(0.5) translateY(30px); opacity: 0.3; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* MARQUEE */
+  .marquee-wrap {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+    overflow: hidden;
+    background: var(--mid);
+  }
+  .marquee-track {
+    display: flex;
+    gap: 48px;
+    animation: marquee 20s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-item {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    flex-shrink: 0;
+  }
+  .marquee-dot { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    #hero { padding: 0 24px 48px; }
+    .about-grid, .skills-wrapper { grid-template-columns: 1fr; gap: 48px; }
+    .exp-item { grid-template-columns: 1fr; gap: 16px; }
+    .exp-tag { justify-self: start; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .scroll-hint { display: none; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">KA<span>.</span></div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="hero-counter">Senior Android Developer — Cairo, Egypt</div>
+
+  <h1 class="hero-title">
+    <span class="line">Khaled</span>
+    <span class="line">Alramam</span>
+    <span class="line">Android.</span>
+  </h1>
+
+  <div class="hero-bottom">
+    <p class="hero-desc">
+      Crafting high-performance Android experiences for 5+ years.
+      Turning complex ideas into elegant, pixel-perfect apps.
+    </p>
+    <div class="hero-badges">
+      <span class="badge">Jetpack Compose</span>
+      <span class="badge">Kotlin</span>
+      <span class="badge">MVVM</span>
+      <span class="badge">5+ Years</span>
+    </div>
+  </div>
+
+  <div class="scroll-hint">Scroll</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item">Android SDK <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Jetpack Compose <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Kotlin <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Firebase <span class="marquee-dot"></span></div>
+    <div class="marquee-item">gRPC <span class="marquee-dot"></span></div>
+    <div class="marquee-item">MVVM <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Flutter <span class="marquee-dot"></span></div>
+    <div class="marquee-item">React Native <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Google APIs <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Android SDK <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Jetpack Compose <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Kotlin <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Firebase <span class="marquee-dot"></span></div>
+    <div class="marquee-item">gRPC <span class="marquee-dot"></span></div>
+    <div class="marquee-item">MVVM <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Flutter <span class="marquee-dot"></span></div>
+    <div class="marquee-item">React Native <span class="marquee-dot"></span></div>
+    <div class="marquee-item">Google APIs <span class="marquee-dot"></span></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">About</div>
+  <div class="about-grid">
+    <div>
+      <h2 class="section-title reveal">Building apps<br>that matter.</h2>
+      <p class="about-text reveal reveal-delay-1">
+        An Android developer with a <strong>genuine passion</strong> for mobile technology.
+        I've spent 5+ years transforming ambitious ideas into production-ready apps used by
+        real people every day. From fintech payments to travel platforms, I bring both
+        technical depth and creative problem-solving to every project.
+        <br><br>
+        Currently a <strong>Senior Android Developer at Almatar</strong>, leading flight
+        features and spearheading a migration to Jetpack Compose. I hold a
+        <strong>Google Associate Android Developer</strong> certification and a Computer
+        Systems Engineering degree from Mansoura University.
+      </p>
+    </div>
+    <div class="stats-grid reveal reveal-delay-2">
+      <div class="stat-box">
+        <span class="stat-number">5+</span>
+        <span class="stat-label">Years of Experience</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">6</span>
+        <span class="stat-label">Companies</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">10+</span>
+        <span class="stat-label">Apps Shipped</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-number">∞</span>
+        <span class="stat-label">Bugs Squashed</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">Experience</div>
+  <h2 class="section-title reveal">Where I've<br>worked.</h2>
+
+  <div class="exp-list">
+    <div class="exp-item reveal">
+      <div class="exp-date">2024 — Present</div>
+      <div>
+        <div class="exp-company">Almatar</div>
+        <div class="exp-role">Senior Android Developer</div>
+        <ul class="exp-bullets">
+          <li>Adding new features to the Almatar travel app</li>
+          <li>Core member of the Flights maintaining team</li>
+          <li>Led migration from XML to Jetpack Compose</li>
+          <li>Collaborated on bug fixes and performance improvements</li>
+        </ul>
+      </div>
+      <div class="exp-tag">Current</div>
+    </div>
+
+    <div class="exp-item reveal reveal-delay-1">
+      <div class="exp-date">2023 — 2024</div>
+      <div>
+        <div class="exp-company">STC</div>
+        <div class="exp-role">Senior Native Android Developer · Cairo</div>
+        <ul class="exp-bullets">
+          <li>Built and revamped the Jusur app (outsourced)</li>
+          <li>Reduced code complexity through systematic refactoring</li>
+          <li>Bridged legacy Java with modern Kotlin codebase</li>
+        </ul>
+      </div>
+      <div class="exp-tag">Telecom</div>
+    </div>
+
+    <div class="exp-item reveal reveal-delay-2">
+      <div class="exp-date">2021 — 2023</div>
+      <div>
+        <div class="exp-company">PayTabs</div>
+        <div class="exp-role">Mid-Level Android & Mobile Developer · Cairo</div>
+        <ul class="exp-bullets">
+          <li>Maintained Flutter, Ionic, Java & React Native payment SDKs</li>
+          <li>Built new secure payment solutions</li>
+          <li>Developed PayTabs merchant app in Flutter from scratch</li>
+        </ul>
+      </div>
+      <div class="exp-tag">Fintech</div>
+    </div>
+
+    <div class="exp-item reveal reveal-delay-3">
+      <div class="exp-date">2020 — 2021</div>
+      <div>
+        <div class="exp-company">Sedra</div>
+        <div class="exp-role">Native Android Developer</div>
+        <ul class="exp-bullets">
+          <li>Developed high-performance Android apps with backend team</li>
+          <li>Led project planning and timeline management</li>
+          <li>Primary problem-solver for customer requirements</li>
+        </ul>
+      </div>
+      <div class="exp-tag">Agency</div>
+    </div>
+
+    <div class="exp-item reveal reveal-delay-4">
+      <div class="exp-date">2019 — 2020</div>
+      <div>
+        <div class="exp-company">Pintrue</div>
+        <div class="exp-role">Native Android Developer</div>
+        <ul class="exp-bullets">
+          <li>Designed low-latency, high-availability Android apps</li>
+          <li>Optimized existing projects for higher user loads</li>
+          <li>Worked across Java & Kotlin stacks</li>
+        </ul>
+      </div>
+      <div class="exp-tag">Startup</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">Projects</div>
+  <h2 class="section-title reveal">Selected<br>work.</h2>
+
+  <div class="projects-grid">
+    <div class="project-card reveal">
+      <span class="project-num">01 —</span>
+      <div class="project-name">Jusur App</div>
+      <p class="project-desc">Revamped a major telecom app from scratch with a modern architecture. Full rewrite with a fresh UX and improved performance.</p>
+      <div class="project-tech">
+        <span class="tech-pill">Jetpack Compose</span>
+        <span class="tech-pill">Kotlin</span>
+        <span class="tech-pill">Koin</span>
+        <span class="tech-pill">MVVM</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal reveal-delay-1">
+      <span class="project-num">02 —</span>
+      <div class="project-name">PayTabs App</div>
+      <p class="project-desc">A super-app for PayTabs merchants to manage accounts and transactions. Built from the ground up with real-time data sync via gRPC.</p>
+      <div class="project-tech">
+        <span class="tech-pill">Flutter</span>
+        <span class="tech-pill">Bloc</span>
+        <span class="tech-pill">gRPC</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal reveal-delay-2">
+      <span class="project-num">03 —</span>
+      <div class="project-name">PayTabs SDK</div>
+      <p class="project-desc">Extended a multi-platform payment SDK (Flutter, Ionic, Java, React Native, Native Android) with new features and security-focused improvements.</p>
+      <div class="project-tech">
+        <span class="tech-pill">Kotlin</span>
+        <span class="tech-pill">Retrofit</span>
+        <span class="tech-pill">Hilt</span>
+        <span class="tech-pill">MVVM</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal reveal-delay-1">
+      <span class="project-num">04 —</span>
+      <div class="project-name">Universe Pro</div>
+      <p class="project-desc">IPTV app for Android TV and phones with code authentication. Managed media player integration, handled streaming glitches and errors at scale.</p>
+      <div class="project-tech">
+        <span class="tech-pill">Kotlin</span>
+        <span class="tech-pill">Hilt</span>
+        <span class="tech-pill">ExoPlayer</span>
+        <span class="tech-pill">VLCPlayer</span>
+        <span class="tech-pill">FCM</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal reveal-delay-2">
+      <span class="project-num">05 —</span>
+      <div class="project-name">Esh7nly</div>
+      <p class="project-desc">An innovative app that charges mobile cards using the camera. Built end-to-end as a personal deep-dive into ML on Android.</p>
+      <div class="project-tech">
+        <span class="tech-pill">Java</span>
+        <span class="tech-pill">MLKit</span>
+        <span class="tech-pill">Vision API</span>
+      </div>
+    </div>
+
+    <div class="project-card reveal reveal-delay-3" style="background: rgba(255,92,53,0.05); border-color: rgba(255,92,53,0.15);">
+      <span class="project-num" style="color: var(--accent)">🎓 —</span>
+      <div class="project-name">Google Certified</div>
+      <p class="project-desc">Holds the Google Associate Android Developer certification, validating expertise in building production-quality Android apps.</p>
+      <div class="project-tech">
+        <span class="tech-pill">Google</span>
+        <span class="tech-pill">Certified</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">Skills</div>
+  <div class="skills-wrapper">
+    <div>
+      <h2 class="section-title reveal">Tech<br>stack.</h2>
+      <p class="skills-intro reveal reveal-delay-1">
+        Deep expertise in the <strong>Android ecosystem</strong>, with working knowledge of cross-platform and backend technologies. Constantly learning, always shipping.
+      </p>
+
+      <div class="cert-box reveal reveal-delay-2" style="margin-top: 40px;">
+        <div class="cert-icon">🏅</div>
+        <div>
+          <div class="cert-title">Google Associate Android Developer</div>
+          <div class="cert-sub">Certified by Google & Andela · African Developer Scholarship</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="skills-bars">
+      <div class="skill-row reveal">
+        <div class="skill-header"><span class="skill-name">Kotlin & Java</span><span class="skill-pct">95%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="--w: 0.95"></div></div>
+      </div>
+      <div class="skill-row reveal reveal-delay-1">
+        <div class="skill-header"><span class="skill-name">Jetpack Compose</span><span class="skill-pct">90%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="--w: 0.9"></div></div>
+      </div>
+      <div class="skill-row reveal reveal-delay-2">
+        <div class="skill-header"><span class="skill-name">Android SDK</span><span class="skill-pct">95%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="--w: 0.95"></div></div>
+      </div>
+      <div class="skill-row reveal reveal-delay-3">
+        <div class="skill-header"><span class="skill-name">Firebase</span><span class="skill-pct">85%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="--w: 0.85"></div></div>
+      </div>
+      <div class="skill-row reveal">
+        <div class="skill-header"><span class="skill-name">Flutter</span><span class="skill-pct">75%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="--w: 0.75"></div></div>
+      </div>
+      <div class="skill-row reveal reveal-delay-1">
+        <div class="skill-header"><span class="skill-name">gRPC</span><span class="skill-pct">80%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="--w: 0.8"></div></div>
+      </div>
+      <div class="skill-row reveal reveal-delay-2">
+        <div class="skill-header"><span class="skill-name">Google APIs (Maps, Vision AI)</span><span class="skill-pct">80%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="--w: 0.8"></div></div>
+      </div>
+      <div class="skill-row reveal reveal-delay-3">
+        <div class="skill-header"><span class="skill-name">Git</span><span class="skill-pct">90%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="--w: 0.9"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-glow"></div>
+  <p class="contact-sub reveal">Let's build something great</p>
+  <div class="contact-big reveal reveal-delay-1">
+    <a href="mailto:khaledalramam@gmail.com">Get in<br>touch.</a>
+  </div>
+  <div class="contact-links reveal reveal-delay-2">
+    <a href="mailto:khaledalramam@gmail.com" class="contact-link">Email</a>
+    <a href="https://linkedin.com/in/khaled-alramam" target="_blank" class="contact-link">LinkedIn</a>
+    <a href="tel:+201210656670" class="contact-link">+20 121 065 6670</a>
+  </div>
+</section>
+
+<footer>
+  <span>© 2025 Khaled Alramam</span>
+  <span>Senior Android Developer · Cairo, Egypt</span>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        // Animate skill bars
+        const fill = e.target.querySelector?.('.skill-fill');
+        if (fill) {
+          setTimeout(() => fill.classList.add('animated'), 200);
+        }
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Animate all skill fills when their parent reveals
+  const skillObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('animated');
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.skill-fill').forEach(el => skillObserver.observe(el));
+</script>
+</body>
+</html>
